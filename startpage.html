@@ -2,108 +2,218 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>New Tab</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Engineer Dashboard</title>
     <style>
         :root {
-            --bg-color: #1e1e1e;
-            --card-bg: #2d2d2d;
-            --text-color: #e0e0e0;
-            --accent-color: #0078d4; /* Azure Blue */
-            --hover-color: #333333;
+            --bg-dark: #0f0f11;
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent-color: #3b82f6;
+            --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            font-family: var(--font-stack);
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh; /* Changed to min-height to allow scrolling if links grow */
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
+            padding: 60px 20px;
+            overflow-y: auto; /* Allow scroll */
+            position: relative;
+        }
+
+        /* Background Atmosphere */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 50% 30%, rgba(0, 120, 212, 0.12) 0%, transparent 70%);
+            z-index: -1;
+            pointer-events: none;
+            position: fixed; /* Fix background during scroll */
         }
 
         .container {
             width: 100%;
-            max-width: 800px;
-            padding: 20px;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            animation: fadeIn 0.6s ease-out;
         }
 
-        /* Search Bar Styling */
+        /* Header */
+        header { text-align: center; margin-bottom: 20px; }
+        #clock {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -2px;
+            background: linear-gradient(180deg, #fff 0%, #ccc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        #date { color: var(--text-muted); font-size: 1rem; margin-top: 5px; font-weight: 500; }
+
+        /* Search */
+        .search-wrapper { width: 100%; max-width: 600px; margin: 0 auto; }
         input[type="text"] {
             width: 100%;
-            padding: 15px;
-            font-size: 1.2rem;
-            background-color: var(--card-bg);
-            border: 1px solid #444;
-            border-radius: 8px;
-            color: var(--text-color);
+            padding: 16px 24px;
+            font-size: 1.1rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-main);
             outline: none;
-            margin-bottom: 40px;
-            box-sizing: border-box;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s ease;
         }
-
         input[type="text"]:focus {
             border-color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.05);
         }
 
-        /* Link Grid */
+        /* Section Headers */
+        h2 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            padding-left: 5px;
+            border-left: 3px solid var(--accent-color);
+        }
+
+        /* Grid */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
         }
 
         .card {
-            background-color: var(--card-bg);
-            padding: 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            color: var(--text-color);
-            font-weight: 600;
-            transition: transform 0.1s, background-color 0.2s;
-            border-left: 4px solid transparent;
             display: flex;
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
+            text-align: center;
+            height: 90px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            text-decoration: none;
+            color: #ddd;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            backdrop-filter: blur(5px);
+            padding: 10px;
         }
 
         .card:hover {
-            transform: translateY(-2px);
-            background-color: var(--hover-color);
-            border-left: 4px solid var(--accent-color);
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
-        /* Vimium Hints usually appear in top-left or center; ensure spacing is clear */
+        /* Tag styling to differentiate types of links */
+        .tag {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        div > .vimiumHintMarker {
+            background-color: #ffbf00 !important;
+            border: 1px solid #c98e00 !important;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <input type="text" id="search" placeholder="Search Google..." autofocus onkeydown="search(this)">
+    <div class="container">
+        <header>
+            <div id="clock">00:00</div>
+            <div id="date">Loading...</div>
+        </header>
 
-    <div class="grid">
-        <a href="https://portal.azure.com" class="card">Azure Portal</a>
-        <a href="https://dev.azure.com" class="card">Azure DevOps</a>
-        <a href="https://console.aws.amazon.com" class="card">AWS Console</a>
-        
-        <a href="https://github.com" class="card">GitHub</a>
-        <a href="https://mail.google.com" class="card">Gmail</a>
-        <a href="https://calendar.google.com" class="card">Calendar</a>
-        
-        <a href="https://chatgpt.com" class="card">ChatGPT</a>
-        <a href="http://localhost:8080" class="card">Localhost:8080</a>
-        <a href="http://localhost:3000" class="card">Localhost:3000</a>
+        <div class="search-wrapper">
+            <input type="text" id="search" placeholder="Search or type URL..." autofocus autocomplete="off">
+        </div>
+
+        <div>
+            <h2>Work Environment</h2>
+            <div class="grid">
+                <a href="https://dev.azure.com" class="card">Azure DevOps<span class="tag">CI/CD & Boards</span></a>
+                <a href="https://ing.service-now.com" class="card">ServiceNow<span class="tag">Change Mgmt</span></a>
+                <a href="https://console-openshift-console.apps.your-domain.com" class="card">OpenShift Console<span class="tag">Cluster</span></a>
+                <a href="https://portal.azure.com" class="card">Azure Portal<span class="tag">Cloud Resources</span></a>
+            </div>
+        </div>
+
+        <div>
+            <h2>Engineering & Go</h2>
+            <div class="grid">
+                <a href="https://pkg.go.dev/" class="card">Pkg.go.dev<span class="tag">Docs</span></a>
+                <a href="https://github.com/uber-go/guide/blob/master/style.md" class="card">Uber Go Style<span class="tag">Best Practices</span></a>
+                <a href="https://mholt.github.io/json-to-go/" class="card">JSON-to-Go<span class="tag">Struct Generator</span></a>
+                <a href="https://gobyexample.com/" class="card">Go by Example<span class="tag">Reference</span></a>
+            </div>
+        </div>
+
+        <div>
+            <h2>Storage & Architecture</h2>
+            <div class="grid">
+                <a href="https://docs.aws.amazon.com/AmazonS3/latest/API/Welcome.html" class="card">S3 API Ref<span class="tag">For ECS Dev</span></a>
+                <a href="https://infohub.delltechnologies.com/t/ecs/" class="card">Dell ECS Docs<span class="tag">Object Storage</span></a>
+                <a href="https://jwt.io/" class="card">JWT.io<span class="tag">Token Debugger</span></a>
+                <a href="https://crontab.guru/" class="card">Crontab.guru<span class="tag">Schedule check</span></a>
+            </div>
+        </div>
     </div>
-</div>
 
-<script>
-    function search(ele) {
-        if(event.key === 'Enter') {
-            window.location.href = "https://www.google.com/search?q=" + ele.value;
+    <script>
+        const searchInput = document.getElementById('search');
+
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                let query = searchInput.value.trim();
+                if (query) {
+                    // Basic URL detection
+                    if (query.includes('.') && !query.includes(' ')) {
+                         if (!query.startsWith('http')) query = 'https://' + query;
+                         window.location.href = query;
+                    } else {
+                        window.location.href = "https://www.google.com/search?q=" + encodeURIComponent(query);
+                    }
+                }
+            }
+        });
+
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('clock').textContent = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+            document.getElementById('date').textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
         }
-    }
-</script>
+
+        updateTime();
+        setInterval(updateTime, 1000);
+    </script>
 
 </body>
 </html>
